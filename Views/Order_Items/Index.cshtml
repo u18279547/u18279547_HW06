@@ -1,0 +1,121 @@
+﻿@model LEsssGOOOOOO.Models.OrdersVM
+
+<h2>Orders</h2>
+
+
+<input type="date" id="datepick" />
+<input type="submit" value="Search" onclick="GetNewData" />
+<br />
+<br />
+
+
+@{
+    decimal gTotal = 0;
+}
+
+
+@foreach (var listy in Model.dividedList)
+{
+    @*<h2>
+            Order @item.order_id - @Model.orderDates.Single(x => x.order_id == item.order_id).order_Date
+        </h2>*@
+    <table class="table">
+        @{
+            gTotal = 0;
+        }
+
+        <tr>
+            <th class="col-md-4">
+                Product Name
+            </th>
+            <th class="col-md-2">
+                Order ID
+            </th>
+            <th class="col-md-2">
+                List Price
+            </th>
+            <th class="col-md-2">
+                Quantity
+            </th>
+            <th class="col-md-2">
+                Total
+            </th>
+
+        </tr>
+
+
+        @foreach (var item in listy)
+        {
+
+
+            <tr>
+                <td>
+
+                    @Model.products.Single(x => x.product_id == item.product_id).product_name
+                </td>
+
+                <td>
+
+                    @item.order_id
+                </td>
+                <td>
+                    @item.list_price
+                </td>
+                <td>
+                    @item.quantity
+                </td>
+                <td>
+                    @item.Total
+                    @{
+                        gTotal += item.Total;
+                    }
+                </td>
+
+            </tr>
+
+        }
+
+        <tr>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+                Grand Total:
+            </td>
+            <td>
+                @gTotal
+            </td>
+        </tr>
+
+
+
+
+
+    </table>
+}
+
+
+@section scripts {
+    <script>
+        $(document).ready(() => {
+            getProducts();
+
+            function GetNewData() {
+                var string = document.getElementById("myDate").value.
+                $.get({
+                    url: "@Url.Action("getProd", "products")",
+                    success: function (data) {
+                        let listData = JSON.parse(data);
+
+                        console.log(listData);
+                    }
+                })
+            }
+        })
+
+    </script>
+
+}

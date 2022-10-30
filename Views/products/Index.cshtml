@@ -1,0 +1,200 @@
+﻿@model PagedList.IPagedList<LEsssGOOOOOO.Models.product>
+@using PagedList.Mvc;
+
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create", new { @class = "btn btn-danger" })
+</p>
+
+@using (Html.BeginForm("Index", "products", FormMethod.Get))
+{
+    <p>
+        Find by name: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+        <input type="submit" value="Search" />
+
+    </p>
+}
+
+<table class="table">
+    <tr>
+        <th>
+            Name
+        </th>
+        <th>
+            Year
+        </th>
+        <th>
+            Price
+        </th>
+        <th>
+            Brand
+        </th>
+        <th>
+            Category
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.product_name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.model_year)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.list_price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.brand.brand_name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.category.category_name)
+            </td>
+            <td>
+                <!--<a type="button"
+       class="Editbtn btn btn-primary"
+       href="#article-editor"-->
+                <!--data-toggle="modal"
+    data-id="@item.product_id">Edit</a>
+    <a type="button"
+       id="Details"
+       class="btn btn-info"
+       href="#article-editor"
+       data-toggle="modal"
+       data-id="@item.product_id">Details</a>-->
+
+                
+
+                @Html.ActionLink("Edit", "Edit", new { id = item.product_id }, new { @class = "btn btn-primary" }) |
+                @Html.ActionLink("Details", "Details", new { id = item.product_id }, new { @class = "btn btn-info" }) |
+                <a id="Deletebtn" class="Deletebtn btn btn-danger" data-id="@item.product_id">Delete</a>
+                @*@Html.ActionLink("Delete", "Delete", new { id = item.product_id }, new { @class = "btn btn-danger" })*@
+            </td>
+        </tr>
+    }
+
+</table>
+
+@*Modal*@
+<div class="modal fade" id="article-editor" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">Add Employee</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="Name">Brand</label>
+                        <input type="text" class="form-control" id="Name" placeholder="State" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Name">Brand</label>
+                        <input type="text" class="form-control" id="Brand" placeholder="State" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Age">Category</label>
+                        <input type="text" class="form-control" id="Category" placeholder="State" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="State">Year</label>
+                        <input type="text" class="form-control" id="Year" placeholder="State" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Country">Price</label>
+                        <input type="text" class="form-control" id="Price" placeholder="Country" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnAdd" onclick="return Add();">Add</button>
+                <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="Update();">Update</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="container" style="margin-left: 20px">
+    <p></p>
+    <p></p>
+    <div class="pagination" style="margin-left: 400px">
+        Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber)
+        of @Model.PageCount   @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(() => {
+
+
+            function loadData() {
+                $.ajax({
+                    url: "Home/Contact",
+                    type: "GET"
+                })
+            }
+
+
+            $("#Deletebtn").on("click", () => {
+                var plant = document.getElementById('Deletebtn');
+                var id = plant.getAttribute('data-id');
+                var ans = confirm("Are you sure you want to delete this Record with id " + id +"?");
+                if (ans) {
+                    $.ajax({
+                        url: "/products/DeleteIt/" + id,
+                        type: "POST",
+                        contentType: "application/json;charset=UTF-8",
+                        dataType: "json",
+                        success: function (result) {
+                            loadData();
+                        },
+                        error: function (errormessage) {
+                            alert("Error: " + errormessage.responseText);
+                        }
+                    });
+                }
+            });
+
+            /*$("#Deletebtn").on("click", De);*/
+
+
+            //function Delete(ID) {
+            //    var ans = confirm("Are you sure you want to delete this Record?");
+            //    if (ans) {
+            //        $.ajax({
+            //            url: "/Home/Delete/" + ID,
+            //            type: "POST",
+            //            contentType: "application/json;charset=UTF-8",
+            //            dataType: "json",
+            //            success: function (result) {
+            //                loadData();
+            //            },
+            //            error: function (errormessage) {
+            //                alert(errormessage.responseText);
+            //            }
+            //        });
+            //    }
+            //}
+
+
+            })
+
+    </script>
+
+}
